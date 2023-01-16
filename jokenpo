@@ -1,0 +1,187 @@
+import random
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel
+from PyQt5 import QtGui
+
+class Jokenpo(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.topo = 100
+        self.esquerda = 100
+        self.largura = 1000
+        self.altura = 600
+        self.lista_jogador = []
+        self.lista_computador = []
+        self.escolha_computador = ''
+        self.pontos_computador = 0
+        self.pontos_jogador = 0
+
+        self.fundo = QLabel(self)
+        self.fundo.move(0, 0)
+        self.fundo.resize(1000, 600)
+        self.fundo.setScaledContents(True)
+        self.fundo.setPixmap(QtGui.QPixmap('img/interface/jokenpo.jpg'))
+
+        self.pontuacao_usuario = QLabel(self)
+        self.pontuacao_usuario.move(430, 134)
+        self.pontuacao_usuario.resize(280, 200)
+        self.pontuacao_usuario.setStyleSheet('QLabel {font: bold; font-size: 20px; color: #ced8f7}')
+
+        self.pontuacao_computador = QLabel(self)
+        self.pontuacao_computador.move(800, 134)
+        self.pontuacao_computador.resize(280, 200)
+        self.pontuacao_computador.setStyleSheet('QLabel {font: bold; font-size: 20px; color: #ced8f7}')
+
+        self.imagem_usuario = QLabel(self)
+        self.imagem_usuario.move(400, 230)
+        self.imagem_usuario.resize(280, 200)
+
+        self.imagem_computador = QLabel(self)
+        self.imagem_computador.move(790, 230)
+        self.imagem_computador.resize(280, 200)
+
+        self.voltar_para_jogo = QPushButton(self)
+        self.voltar_para_jogo.move(30, 17)
+        self.voltar_para_jogo.resize(100, 65)
+        self.voltar_para_jogo.setFlat(True)
+        self.voltar_para_jogo.setEnabled(False)
+        self.voltar_para_jogo.clicked.connect(self.mostra_jogo)
+
+        self.voltar_para_menu = QPushButton(self)
+        self.voltar_para_menu.move(855, 17)
+        self.voltar_para_menu.resize(100, 65)
+        self.voltar_para_menu.setEnabled(True)
+        self.voltar_para_menu.setFlat(True)
+        self.voltar_para_menu.clicked.connect(self.funcao)
+
+        self.botao_limpar = QPushButton(self)
+        self.botao_limpar.move(800, 520)
+        self.botao_limpar.resize(120, 60)
+        self.botao_limpar.setFlat(True)
+        self.botao_limpar.clicked.connect(self.limpar)
+
+        self.botao_pedra = QPushButton(self)
+        self.botao_pedra.move(20, 40)
+        self.botao_pedra.resize(200, 170)
+        self.botao_pedra.setFlat(True)
+        self.botao_pedra.clicked.connect(self.mostra_pedra)
+
+        self.botao_tesoura = QPushButton(self)
+        self.botao_tesoura.move(20, 220)
+        self.botao_tesoura.resize(200, 170)
+        self.botao_tesoura.setFlat(True)
+        self.botao_tesoura.clicked.connect(self.mostra_tesoura)
+
+        self.botao_papel = QPushButton(self)
+        self.botao_papel.move(20, 390)
+        self.botao_papel.resize(210, 200)
+        self.botao_papel.setFlat(True)
+        self.botao_papel.clicked.connect(self.mostra_papel)
+
+        self.carregar_janela()
+
+    def carregar_janela(self):
+        self.setGeometry(self.esquerda, self.topo, self.largura, self.altura)
+        # self.show()
+
+    def mostra_papel(self):
+        self.imagem_usuario.setPixmap(QtGui.QPixmap('img/interface/papel.png'))
+        self.lista_jogador.append(1)
+        self.jogo()
+
+    def mostra_tesoura(self):
+        self.imagem_usuario.setPixmap(QtGui.QPixmap('img/interface/tesoura.png'))
+        self.lista_jogador.append(2)
+        self.jogo()
+
+    def mostra_pedra(self):
+        self.imagem_usuario.setPixmap(QtGui.QPixmap('img/interface/pedra.png'))
+        self.lista_jogador.append(3)
+        self.jogo()
+
+    def jogo(self):
+        self.escolha_computador = random.randint(1, 3)
+        if self.escolha_computador == 1:
+            self.imagem_computador.setPixmap(QtGui.QPixmap('img/interface/papel.png'))
+        elif self.escolha_computador == 2:
+            self.imagem_computador.setPixmap(QtGui.QPixmap('img/interface/tesoura.png'))
+        elif self.escolha_computador == 3:
+            self.imagem_computador.setPixmap(QtGui.QPixmap('img/interface/pedra.png'))
+
+        tamanho = len(self.lista_jogador)
+
+        if self.lista_jogador[tamanho-1] == self.escolha_computador:
+            print('empate')
+        elif self.lista_jogador[tamanho-1] == 1 and self.escolha_computador == 2: # tesoura vence de papel
+            self.pontos_computador +=1
+            self.pontuacao_computador.setText(str(self.pontos_computador))
+        elif self.lista_jogador[tamanho-1] == 2 and self.escolha_computador == 1: # tesoura vence de papel
+            self.pontos_jogador +=1
+            self.pontuacao_usuario.setText(str(self.pontos_jogador))
+        elif self.lista_jogador[tamanho-1] == 1 and self.escolha_computador == 3: # papel vence de pedra
+            self.pontos_jogador += 1
+            self.pontuacao_usuario.setText(str(self.pontos_jogador))
+        elif self.lista_jogador[tamanho-1] == 3 and self.escolha_computador == 1: # papel vence de pedra
+            self.pontos_computador +=1
+            self.pontuacao_computador.setText(str(self.pontos_computador))
+        elif self.lista_jogador[tamanho-1] == 2 and self.escolha_computador == 3: # pedra vence de tesoura
+            self.pontos_computador +=1
+            self.pontuacao_computador.setText(str(self.pontos_computador))
+        elif self.lista_jogador[tamanho-1] == 3 and self.escolha_computador == 2: # pedra vence de tesoura
+            self.pontos_jogador += 1
+            self.pontuacao_usuario.setText(str(self.pontos_jogador))
+
+        if self.pontos_jogador == 5:
+            self.fundo.setPixmap(QtGui.QPixmap('img/interface/venceu.jpg'))
+            self.voltar_para_jogo.setEnabled(True)
+            self.voltar_para_menu.setEnabled(False)
+            self.situacao_botao(False)
+            self.botao_limpar.setEnabled(False)
+            self.pontuacao_computador.setText('')
+            self.pontuacao_usuario.setText('')
+            self.imagem_computador.setPixmap(QtGui.QPixmap(''))
+            self.imagem_usuario.setPixmap(QtGui.QPixmap(''))
+            self.pontos_jogador = 0
+            self.pontos_computador = 0
+        if self.pontos_computador == 5:
+            self.fundo.setPixmap(QtGui.QPixmap('img/interface/perdeu.jpg'))
+            self.voltar_para_jogo.setEnabled(True)
+            self.voltar_para_menu.setEnabled(False)
+            self.situacao_botao(False)
+            self.botao_limpar.setEnabled(False)
+            self.pontuacao_computador.setText('')
+            self.pontuacao_usuario.setText('')
+            self.imagem_computador.setPixmap(QtGui.QPixmap(''))
+            self.imagem_usuario.setPixmap(QtGui.QPixmap(''))
+            self.pontos_jogador = 0
+            self.pontos_computador = 0
+
+    def situacao_botao(self, valor):
+        self.botao_papel.setEnabled(valor)
+        self.botao_pedra.setEnabled(valor)
+        self.botao_tesoura.setEnabled(valor)
+
+    def mostra_jogo(self):
+        self.situacao_fundo = 1
+        self.fundo.setPixmap(QtGui.QPixmap('img/interface/jokenpo.jpg'))
+        self.situacao_botao(True)
+
+        self.voltar_para_menu.setEnabled(True)
+        self.botao_limpar.setEnabled(True)
+        self.voltar_para_jogo.setEnabled(False)
+
+    def funcao(self):
+        print('eita chegou')
+
+    def limpar(self):
+        self.pontuacao_computador.setText('')
+        self.pontuacao_usuario.setText('')
+        self.imagem_computador.setPixmap(QtGui.QPixmap(''))
+        self.imagem_usuario.setPixmap(QtGui.QPixmap(''))
+        self.pontos_jogador = 0
+
+
+if __name__ == '__main__':
+    aplicacao = QApplication(sys.argv)
+    j = Jokenpo()
+    sys.exit(aplicacao.exec())
