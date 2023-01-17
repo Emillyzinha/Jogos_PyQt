@@ -1,3 +1,4 @@
+import random
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QLineEdit
 from PyQt5 import QtGui
@@ -6,10 +7,18 @@ from PyQt5 import QtGui
 class Forca(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.indice = ''
+        self.print_usuario = ''
+        self.qtd = ''
         self.topo = 100
         self.esquerda = 100
         self.largura = 1000
         self.altura = 600
+        self.pri = ''
+        self.letra = ''
+        self.lista_palavras = ['DOBBY', 'RELÍQUIAS', 'HAGRID', 'HOGWARTS', 'HARRY', 'DEMENTADORES', 'SECRETA', 'TRIBUXO', 'QUADRIBOL', 'GRINGOTES']
+        self.palavra_sorteada = ''
+        self.lista_palavra_sorteada = []
 
         self.fundo = QLabel(self)
         self.fundo.move(0, 0)
@@ -17,20 +26,70 @@ class Forca(QMainWindow):
         self.fundo.setScaledContents(True)
         self.fundo.setPixmap(QtGui.QPixmap('img/interface/forca.jpg'))
 
+        self.lugar_palavra_sorteada = QLabel(self)
+        self.lugar_palavra_sorteada.resize(500, 200)
+        self.lugar_palavra_sorteada.move(80, 280)
+        self.lugar_palavra_sorteada.setText('HARRY POTTER')
+        self.lugar_palavra_sorteada.setStyleSheet('QLabel {font: bold; font-size: 25px; color: #ced8f7}')
+
+        self.tratamento_de_erro = QLabel(self)
+        self.tratamento_de_erro.resize(500, 200)
+        self.tratamento_de_erro.move(380, 120)
+        self.tratamento_de_erro.setText('HARRY POTTER')
+        self.tratamento_de_erro.setStyleSheet('QLabel {font: bold; font-size: 25px; color: #ced8f7}')
+
         self.botao_avada = QPushButton(self)
-        self.botao_avada.move(150, 460)
-        self.botao_avada.resize(190, 80)
+        self.botao_avada.move(680, 230)
+        self.botao_avada.resize(180, 70)
+        self.botao_avada.setFlat(True)
+        self.botao_avada.clicked.connect(self.leitura)
 
         self.caixa_texto = QLineEdit(self)
         self.caixa_texto.setStyleSheet('border: 2px solid rgb(52, 59, 72, 20%); border-radius: 5px; background-color: rgb(52, 59, 72, 20%);color: rgb(205, 195, 255);')
-        self.caixa_texto.move(120, 325)
+        self.caixa_texto.move(380, 243)
         self.caixa_texto.resize(300, 40)
 
+        self.sortear_palavra()
         self.carregar_janela()
 
     def carregar_janela(self):
         self.setGeometry(self.esquerda, self.topo, self.largura, self.altura)
         self.show()
+
+    def sortear_palavra(self):
+        self.palavra_sorteada = random.choice(self.lista_palavras)
+        print(self.palavra_sorteada)
+
+    def leitura(self):
+        self.letra = self.caixa_texto.text().upper()
+        self.jogo()
+
+    def jogo(self):
+        self.pri = len(self.palavra_sorteada)
+        print(self.pri)
+
+        for i in self.palavra_sorteada:
+            self.lista_palavra_sorteada.append('- ')
+
+        if self.letra in self.palavra_sorteada:
+            self.indice = self.palavra_sorteada.find(self.letra)
+            self.lista_palavra_sorteada[self.indice] = self.letra
+            print(*self.lista_palavra_sorteada)
+            self.print_usuario = self.lista_palavra_sorteada
+
+        else:
+            print('passei')
+
+        self.print_usuario = self.lista_palavra_sorteada[0:]
+
+        self.print_usuario = ''
+        for i in self.lista_palavra_sorteada:
+            self.print_usuario += i
+        print('print: ', self.print_usuario)
+
+        self.lugar_palavra_sorteada.setText(self.print_usuario)
+
+        # substituir de vez duas letras iguais
 
 
 if __name__ == '__main__':
