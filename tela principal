@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel
 from PyQt5 import QtGui
 from jogoVelha import *
 from JoKenPo import *
+from jogoForca import *
 
 class Principal(QMainWindow):
     def __init__(self):
@@ -33,6 +34,7 @@ class Principal(QMainWindow):
         self.botao_forca.move(49, 350)
         self.botao_forca.resize(190, 60)
         self.botao_forca.setFlat(True)
+        self.botao_forca.clicked.connect(self.chamar_quarta_tela)
 
         self.botao_velha = QPushButton(self)
         self.botao_velha.move(49, 420)
@@ -49,6 +51,10 @@ class Principal(QMainWindow):
     def chamar_terceira_tela(self):
         j.show()
         self.hide()
+
+    def chamar_quarta_tela(self):
+        self.hide()
+        f.show()
 
     def carregar_janela(self):
         self.setGeometry(self.esquerda, self.topo, self.largura, self.altura)
@@ -69,5 +75,6 @@ if __name__ == '__main__':
     p = Principal()
     velha = Velha()
     j = Jokenpo()
+    f = Forca()
     # aplicacao.setStyleSheet(stylesheet)
     sys.exit(aplicacao.exec())
