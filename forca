@@ -1,5 +1,8 @@
 import random
 import sys
+import time
+
+from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QLineEdit
 from PyQt5 import QtGui
 
@@ -7,18 +10,24 @@ from PyQt5 import QtGui
 class Forca(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.indice = ''
-        self.print_usuario = ''
-        self.qtd = ''
         self.topo = 100
         self.esquerda = 100
         self.largura = 1000
         self.altura = 600
-        self.pri = ''
+        self.qtd_caracter_pal_sorteada = ''
         self.letra = ''
-        self.lista_palavras = ['DOBBY', 'RELÍQUIAS', 'HAGRID', 'HOGWARTS', 'HARRY', 'DEMENTADORES', 'SECRETA', 'TRIBUXO', 'QUADRIBOL', 'GRINGOTES']
+        self.lista_palavras = ['DOBBY', 'RELIQUIAS', 'HAGRID', 'HOGWARTS', 'HARRY', 'DEMENTADORES', 'SECRETA',
+                               'TRIBUXO', 'QUADRIBOL', 'GRINGOTES']
+        self.lista_dicas = ['----- é um elfo livre', 'Nome dos itens mágicos criados pela morte', 'Encontra o Harry em seu aniversário de 11 anos', 'Lugar mais seguro do mundo invadido em todos os filmes',
+                            'O principal', 'Consomem a alegria humana', 'Câmara', 'Torneio', 'Esporte', 'Não mais seguro que o Castelo.']
         self.palavra_sorteada = ''
         self.lista_palavra_sorteada = []
+        self.lista_chutes = []
+        self.mostrar_chutes = ''
+        self.index_palavra = ''
+        self.dica_sorteada = ''
+        self.mostrar_usuario = ''
+        self.qtd = ''
 
         self.fundo = QLabel(self)
         self.fundo.move(0, 0)
@@ -29,14 +38,22 @@ class Forca(QMainWindow):
         self.lugar_palavra_sorteada = QLabel(self)
         self.lugar_palavra_sorteada.resize(500, 200)
         self.lugar_palavra_sorteada.move(80, 280)
-        self.lugar_palavra_sorteada.setText('HARRY POTTER')
         self.lugar_palavra_sorteada.setStyleSheet('QLabel {font: bold; font-size: 25px; color: #ced8f7}')
+
+        self.dicas = QLabel(self)
+        self.dicas.move(165, 47)
+        self.dicas.resize(500, 200)
+        self.dicas.setStyleSheet('QLabel {font: bold; font-size: 20px; color: #ced8f7}')
 
         self.tratamento_de_erro = QLabel(self)
         self.tratamento_de_erro.resize(500, 200)
-        self.tratamento_de_erro.move(380, 120)
-        self.tratamento_de_erro.setText('HARRY POTTER')
-        self.tratamento_de_erro.setStyleSheet('QLabel {font: bold; font-size: 25px; color: #ced8f7}')
+        self.tratamento_de_erro.move(385, 123)
+        self.tratamento_de_erro.setStyleSheet('QLabel {font: bold; font-size: 20px; color: #ff4040}')
+
+        self.chutes = QLabel(self)
+        self.chutes.resize(500, 200)
+        self.chutes.move(210, 103)
+        self.chutes.setStyleSheet('QLabel {font: bold; font-size: 20px; color: #ff4040}')
 
         self.botao_avada = QPushButton(self)
         self.botao_avada.move(680, 230)
@@ -44,52 +61,188 @@ class Forca(QMainWindow):
         self.botao_avada.setFlat(True)
         self.botao_avada.clicked.connect(self.leitura)
 
+        self.botao_voltar_menu = QPushButton(self)
+        self.botao_voltar_menu.move(30, 17)
+        self.botao_voltar_menu.resize(100, 65)
+        self.botao_voltar_menu.setFlat(True)
+        self.botao_voltar_menu.setEnabled(False)
+        self.botao_voltar_menu.clicked.connect(self.mostra_jogo)
+
+        self.voltar_para_menu = QPushButton(self)
+        self.voltar_para_menu.move(855, 17)
+        self.voltar_para_menu.resize(100, 65)
+        self.voltar_para_menu.setEnabled(True)
+        self.voltar_para_menu.setFlat(True)
+        # self.voltar_para_menu.clicked.connect(self.funcao)
+
         self.caixa_texto = QLineEdit(self)
         self.caixa_texto.setStyleSheet('border: 2px solid rgb(52, 59, 72, 20%); border-radius: 5px; background-color: rgb(52, 59, 72, 20%);color: rgb(205, 195, 255);')
         self.caixa_texto.move(380, 243)
         self.caixa_texto.resize(300, 40)
 
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.funcao_repetitiva)
         self.sortear_palavra()
+
         self.carregar_janela()
 
     def carregar_janela(self):
         self.setGeometry(self.esquerda, self.topo, self.largura, self.altura)
-        self.show()
+        # self.show()
+
+    def funcao_repetitiva(self):
+        if len(self.lista_chutes) == 1:
+            self.fundo.setPixmap(QtGui.QPixmap('img/interface/depois1.jpg'))
+        elif len(self.lista_chutes) == 2:
+            self.fundo.setPixmap(QtGui.QPixmap('img/interface/depois2.jpg'))
+        elif len(self.lista_chutes) == 3:
+            self.fundo.setPixmap(QtGui.QPixmap('img/interface/depois3.jpg'))
+        elif len(self.lista_chutes) == 4:
+            self.fundo.setPixmap(QtGui.QPixmap('img/interface/depois4.jpg'))
+        elif len(self.lista_chutes) == 5:
+            self.fundo.setPixmap(QtGui.QPixmap('img/interface/depois5.jpg'))
+        elif len(self.lista_chutes) == 6:
+            self.img_perdeu()
+
+    def iniciar_timer(self):
+        if not self.timer.isActive():
+            self.timer.start(500)
 
     def sortear_palavra(self):
         self.palavra_sorteada = random.choice(self.lista_palavras)
-        print(self.palavra_sorteada)
 
-    def leitura(self):
-        self.letra = self.caixa_texto.text().upper()
-        self.jogo()
-
-    def jogo(self):
-        self.pri = len(self.palavra_sorteada)
-        print(self.pri)
+        self.index_palavra = self.lista_palavras.index(self.palavra_sorteada)
+        self.dica_sorteada = self.lista_dicas[self.index_palavra]
+        self.dicas.setText(self.dica_sorteada)
 
         for i in self.palavra_sorteada:
             self.lista_palavra_sorteada.append('- ')
+            self.mostrar_usuario += '- '
+        self.lugar_palavra_sorteada.setText(self.mostrar_usuario)
 
-        if self.letra in self.palavra_sorteada:
-            self.indice = self.palavra_sorteada.find(self.letra)
-            self.lista_palavra_sorteada[self.indice] = self.letra
-            print(*self.lista_palavra_sorteada)
-            self.print_usuario = self.lista_palavra_sorteada
+    def leitura(self):
+        self.letra = self.caixa_texto.text().upper()
+        self.caixa_texto.clear()
+        self.jogo()
 
-        else:
-            print('passei')
+    def errou(self, img1, img2):
+        self.fundo.setPixmap(QtGui.QPixmap(img1))
+        if not self.timer.isActive():
+            self.timer.start(500)
+            self.fundo.setPixmap(QtGui.QPixmap(img2))
 
-        self.print_usuario = self.lista_palavra_sorteada[0:]
+    def jogo(self):
 
-        self.print_usuario = ''
-        for i in self.lista_palavra_sorteada:
-            self.print_usuario += i
-        print('print: ', self.print_usuario)
+        self.qtd_caracter_pal_sorteada = len(self.palavra_sorteada)
 
-        self.lugar_palavra_sorteada.setText(self.print_usuario)
+        if self.letra == '':
+            self.tratamento_de_erro.setText('Digite uma letra, por favor.')
+        elif self.letra.isalpha() == False:
+            self.tratamento_de_erro.setText('Digite uma letra, por favor.')
 
-        # substituir de vez duas letras iguais
+        elif len(self.letra) != 1 and len(self.letra) < self.qtd_caracter_pal_sorteada:
+            self.tratamento_de_erro.setText('Digite somente uma letra ou a palavra completa')
+
+        elif self.letra == self.palavra_sorteada:
+            self.mostrar_usuario = self.letra
+            self.lugar_palavra_sorteada.setText(self.mostrar_usuario)
+            self.img_ganhou()
+
+        elif self.letra in self.lista_palavra_sorteada or self.letra in self.lista_chutes:
+            self.tratamento_de_erro.setText('Essa letra já foi selecionada')
+
+        elif self.letra not in self.palavra_sorteada:
+            self.lista_chutes.append(self.letra)
+            self.tratamento_de_erro.setText('')
+            self.mostrar_chutes = ''
+            for e in self.lista_chutes:
+                self.mostrar_chutes += e + ' '
+            self.chutes.setText(self.mostrar_chutes)
+            if len(self.lista_chutes) == 1:
+                if not self.timer.isActive():
+                    self.timer.start(500)
+                    self.fundo.setPixmap(QtGui.QPixmap('img/interface/durante1.jpg'))
+            if len(self.lista_chutes) == 2:
+                self.fundo.setPixmap(QtGui.QPixmap('img/interface/durante2.jpg'))
+                if not self.timer.isActive():
+                    self.timer.start(500)
+            elif len(self.lista_chutes) == 3:
+                self.fundo.setPixmap(QtGui.QPixmap('img/interface/durante3.jpg'))
+                if not self.timer.isActive():
+                    self.timer.start(500)
+            elif len(self.lista_chutes) == 4:
+                self.fundo.setPixmap(QtGui.QPixmap('img/interface/durante4.jpg'))
+                if not self.timer.isActive():
+                    self.timer.start(500)
+            elif len(self.lista_chutes) == 5:
+                self.fundo.setPixmap(QtGui.QPixmap('img/interface/durante5.jpg'))
+                if not self.timer.isActive():
+                    self.timer.start(500)
+            elif len(self.lista_chutes) == 6:
+                self.fundo.setPixmap(QtGui.QPixmap('img/interface/durante6.jpg'))
+                if not self.timer.isActive():
+                    self.timer.start(500)
+
+        elif self.letra in self.palavra_sorteada:
+            for index, item in enumerate(self.palavra_sorteada):
+                if item == self.letra:
+                    self.lista_palavra_sorteada.insert(index, item)
+                    p_del = index + 1
+                    del self.lista_palavra_sorteada[p_del]
+
+            self.mostrar_usuario = self.lista_palavra_sorteada[0:]
+
+            self.mostrar_usuario = ''
+            for i in self.lista_palavra_sorteada:
+                self.mostrar_usuario += i
+
+            self.lugar_palavra_sorteada.setText(self.mostrar_usuario)
+
+            self.tratamento_de_erro.setText('')
+
+        if self.mostrar_usuario == self.palavra_sorteada:
+            self.img_ganhou()
+
+    def mostra_jogo(self):
+        self.fundo.setPixmap(QtGui.QPixmap('img/interface/forca.jpg'))
+        self.caixa_texto.clear()
+        self.caixa_texto.show()
+        self.caixa_texto.setEnabled(True)
+        self.lugar_palavra_sorteada.setEnabled(True)
+        self.botao_avada.setEnabled(True)
+        self.botao_voltar_menu.setEnabled(True)
+        self.sortear_palavra()
+
+    def img_perdeu(self):
+        self.fundo.setPixmap(QtGui.QPixmap('img/interface/perdeu.jpg'))
+        self.caixa_texto.hide()
+        self.lista_palavra_sorteada.clear()
+        self.lista_chutes.clear()
+        self.mostrar_usuario = ''
+        self.chutes.setText('')
+        self.dicas.setText('')
+        self.tratamento_de_erro.setText('')
+        self.lugar_palavra_sorteada.setText('')
+        self.situ_botoes(True, False)
+
+    def img_ganhou(self):
+        self.fundo.setPixmap(QtGui.QPixmap('img/interface/venceu.jpg'))
+
+        self.caixa_texto.hide()
+        self.lista_palavra_sorteada.clear()
+        self.lista_chutes.clear()
+        self.mostrar_usuario = ''
+        self.chutes.setText('')
+        self.dicas.setText('')
+        self.tratamento_de_erro.setText('')
+        self.lugar_palavra_sorteada.setText('')
+        self.situ_botoes(True, False)
+
+    def situ_botoes(self, verdade, falso):
+        self.botao_avada.setEnabled(falso)
+        self.botao_voltar_menu.setEnabled(verdade)
+        self.caixa_texto.setEnabled(falso)
+        self.lugar_palavra_sorteada.setEnabled(falso)
 
 
 if __name__ == '__main__':
