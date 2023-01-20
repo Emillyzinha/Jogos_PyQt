@@ -1,5 +1,6 @@
+import random
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QLineEdit
 from PyQt5 import QtGui
 
 class Memoria(QMainWindow):
@@ -9,21 +10,95 @@ class Memoria(QMainWindow):
         self.esquerda = 100
         self.largura = 1000
         self.altura = 600
+        self.situ_dobby = 0
+        self.situ_dobby_2 = 1
+        self.situ_hermione = 0
+        self.situ_hermione_2 = 0
+        self.img_sorteada = ''
+        self.img_1 = ''
+        self.img_2 = ''
+        self.titulo = "Memory"
 
         self.fundo = QLabel(self)
         self.fundo.move(0, 0)
         self.fundo.resize(1000, 600)
         self.fundo.setScaledContents(True)
-        self.fundo.setPixmap(QtGui.QPixmap('img/interface/velha.jpg'))
+        self.fundo.setPixmap(QtGui.QPixmap('img/memoria.jpg'))
+
+        self.botao_img_dobby = QPushButton(self)
+        self.botao_img_dobby.move(100, 110)
+        self.botao_img_dobby.resize(100, 117)
+        self.botao_img_dobby.setFlat(True)
+        self.botao_img_dobby.clicked.connect(self.situacao_botao_dobby)
+
+        self.botao_img_dobby_2 = QPushButton(self)
+        self.botao_img_dobby_2.move(275, 110)
+        self.botao_img_dobby_2.resize(100, 117)
+        self.botao_img_dobby_2.setFlat(True)
+        self.botao_img_dobby_2.clicked.connect(self.sortear_img)
+
+        self.botao_img_hermione = QPushButton(self)
+        self.botao_img_hermione.move(450, 110)
+        self.botao_img_hermione.resize(100, 117)
+        self.botao_img_hermione.setFlat(True)
+        self.botao_img_hermione.clicked.connect(self.situacao_botao_hermione)
+
+        self.botao_img_hermione_2 = QPushButton(self)
+        self.botao_img_hermione_2.move(625, 110)
+        self.botao_img_hermione_2.step_value = 1
+        self.botao_img_hermione_2.resize(100, 117)
+        self.botao_img_hermione_2.setFlat(True)
+        self.botao_img_hermione_2.clicked.connect(self.situacao_botao_hermione_2)
+
+        self.voltar_para_menu = QPushButton(self)
+        self.voltar_para_menu.move(865, 17)
+        self.voltar_para_menu.resize(100, 65)
+        self.voltar_para_menu.setEnabled(True)
+        self.voltar_para_menu.setFlat(True)
 
         self.carregar_janela()
 
     def carregar_janela(self):
         self.setGeometry(self.esquerda, self.topo, self.largura, self.altura)
-        self.show()
+        self.setWindowTitle(self.titulo)
+        # self.show()
+
+    def situacao_botao_dobby(self):
+        self.situ_dobby = 1
+        self.jogo()
+
+    def situacao_botao_dobby_2(self):
+        self.situ_dobby_2 = 1
+        self.jogo()
+
+    def situacao_botao_hermione(self):
+        self.situ_hermione = 1
+        self.jogo()
+
+    def situacao_botao_hermione_2(self):
+        self.situ_hermione_2 = 1
+        self.jogo()
+
+    def sortear_img(self, botao):
+        self.img_sorteada = random.randint(1, 2)
+        if self.img_sorteada == 1:
+            return botao.setStyleSheet('img/interface/dobby.png')
+        # elif self.img_sorteada == 2:
+        #     self.img_2 = 'img/interface/hermione.png'
+        #     return self.img_2
+
+    def jogo(self):
+        if self.situ_dobby == 1:
+            print('oi')
+            # self.sortear_img(self.botao_img_dobby)
+        self.botao_img_dobby.setStyleSheet(self.sortear_img(self.botao_img_dobby))
+        if self.situ_dobby_2 == 1:
+            print('oi2')
+            # self.sortear_img(self.botao_img_dobby)
+            self.botao_img_dobby_2.setStyleSheet(self.sortear_img(self.botao_img_dobby))
 
 
 if __name__ == '__main__':
     aplicacao = QApplication(sys.argv)
-    f = Memoria()
+    memoria = Memoria()
     sys.exit(aplicacao.exec())
