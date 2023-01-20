@@ -4,6 +4,8 @@ from PyQt5 import QtGui
 from jogoVelha import *
 from JoKenPo import *
 from jogoForca import *
+from jogoMemoria import *
+
 
 class Principal(QMainWindow):
     def __init__(self):
@@ -12,69 +14,101 @@ class Principal(QMainWindow):
         self.esquerda = 530
         self.largura = 800
         self.altura = 600
+        self.titulo = "Tela principal"
 
         self.fundo = QLabel(self)
         self.fundo.move(0, 0) # esquerda e do topo
         self.fundo.resize(800, 600) # largura e altura do botão
-        self.fundo.setPixmap(QtGui.QPixmap('img/interface/tela inicial.jpg'))
+        self.fundo.setPixmap(QtGui.QPixmap('img/tela inicial.jpg'))
         self.fundo.setScaledContents(True)
 
         self.botao_jokenpo = QPushButton(self)
         self.botao_jokenpo.move(49, 230)
         self.botao_jokenpo.resize(190, 60)
         self.botao_jokenpo.setFlat(True)
-        self.botao_jokenpo.clicked.connect(self.chamar_terceira_tela)
+        self.botao_jokenpo.clicked.connect(self.chamar_tela_jokenpo)
 
         self.botao_memoria = QPushButton(self)
         self.botao_memoria.move(49, 290)
         self.botao_memoria.resize(190, 60)
         self.botao_memoria.setFlat(True)
+        self.botao_memoria.clicked.connect(self.chamar_tela_memoria)
 
         self.botao_forca = QPushButton(self)
         self.botao_forca.move(49, 350)
         self.botao_forca.resize(190, 60)
         self.botao_forca.setFlat(True)
-        self.botao_forca.clicked.connect(self.chamar_quarta_tela)
+        self.botao_forca.clicked.connect(self.chamar_tela_forca)
 
         self.botao_velha = QPushButton(self)
         self.botao_velha.move(49, 420)
         self.botao_velha.resize(190, 60)
         self.botao_velha.setFlat(True)
-        self.botao_velha.clicked.connect(self.chamar_segunda_tela)
+        self.botao_velha.clicked.connect(self.chamar_tela_velha)
 
         self.carregar_janela()
 
-    def chamar_segunda_tela(self):
+    def chamar_tela_memoria(self):
+        memoria.__init__()
+        memoria.show()
+        self.hide()
+        memoria.voltar_para_menu.clicked.connect(self.voltar_memoria)
+
+    def voltar_memoria(self):
+        memoria.hide()
+        self.show()
+
+    def chamar_tela_velha(self):
+        velha.__init__()
         velha.show()
         self.hide()
+        velha.botao_voltar.clicked.connect(self.voltar_velha)
 
-    def chamar_terceira_tela(self):
-        j.show()
+    def voltar_velha(self):
+        self.show()
+        velha.close()
+        velha.limpar()
+        velha.pontos_jogador = 0
+        velha.pontos_computador = 0
+
+    def chamar_tela_jokenpo(self):
+        jokenpo.__init__()
+        jokenpo.show()
+        jokenpo.limpar()
+        jokenpo.voltar_para_menu.clicked.connect(self.voltar_jokenpo)
         self.hide()
 
-    def chamar_quarta_tela(self):
+    def voltar_jokenpo(self):
+        self.show()
+        jokenpo.close()
+
+    def chamar_tela_forca(self):
+        forca.__init__()
         self.hide()
-        f.show()
+        forca.voltar_para_menu.clicked.connect(self.voltar_forca)
+        forca.show()
+
+    def voltar_forca(self):
+        self.show()
+        forca.limpar_tudo(True, False)
+        forca.close()
+        forca.botao_avada.setFlat(True)
+        forca.caixa_texto.show()
+        forca.caixa_texto.setEnabled(True)
+        forca.caixa_texto.clear()
+        forca.fundo.setPixmap(QtGui.QPixmap('img/forca.jpg'))
 
     def carregar_janela(self):
         self.setGeometry(self.esquerda, self.topo, self.largura, self.altura)
         self.show()
-
-# stylesheet = """
-#         Janela {
-#             background-image: url('img/interface/tela inicial.jpg');
-#             background-repeat: no-repeat;
-#             background-position: center;
-#             background-color: white;
-#         }
-# """
+        self.setWindowTitle(self.titulo)
 
 
 if __name__ == '__main__':
     aplicacao = QApplication(sys.argv)
-    p = Principal()
+    principal = Principal()
     velha = Velha()
-    j = Jokenpo()
-    f = Forca()
-    # aplicacao.setStyleSheet(stylesheet)
+    jokenpo = Jokenpo()
+    forca = Forca()
+    memoria = Memoria()
     sys.exit(aplicacao.exec())
