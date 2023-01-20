@@ -1,7 +1,8 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel
 from PyQt5 import QtGui
-# from telaPrincipal import *
+from telaPrincipal import *
+
 
 class Velha(QMainWindow):
     def __init__(self):
@@ -10,6 +11,7 @@ class Velha(QMainWindow):
         self.esquerda = 100
         self.largura = 1000
         self.altura = 600
+        self.titulo = 'Tic tac toe'
         self.lista_jogadas = []
         self.verificacao_jogadas = [0, 0, 0, 0, 0, 0, 0, 0, 0]
         self.verificacao_jogador = [0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -31,11 +33,11 @@ class Velha(QMainWindow):
         self.fundo.move(0, 0)
         self.fundo.resize(1000, 600)
         self.fundo.setScaledContents(True)
-        self.fundo.setPixmap(QtGui.QPixmap('img/interface/velha.jpg'))
+        self.fundo.setPixmap(QtGui.QPixmap('img/velha.jpg'))
 
         self.pontuacao_computador = QLabel(self)
-        self.pontuacao_computador.move(180, 45) #esquerda e topo
-        self.pontuacao_computador.resize(100, 100) #largura e altura
+        self.pontuacao_computador.move(180, 45)  # esquerda e topo
+        self.pontuacao_computador.resize(100, 100)  # largura e altura
         self.pontuacao_computador.setStyleSheet('QLabel {font: bold; font-size: 45px; color: #ced8f7}')
 
         self.pontuacao_jogador = QLabel(self)
@@ -102,15 +104,14 @@ class Velha(QMainWindow):
         self.botao9.setFlat(True)
         self.botao9.clicked.connect(self.verifica9)
 
-        # self.botao_voltar = QPushButton(self)
-        # self.botao_voltar.move(850, 40) #esquerda e topo
-        # self.botao_voltar.resize(125, 70) #largura e altura
-        # self.botao_voltar.setFlat(False)
-        # self.botao_voltar.clicked.connect(self.voltar)
+        self.botao_voltar = QPushButton(self)
+        self.botao_voltar.move(850, 40)  # esquerda e topo
+        self.botao_voltar.resize(125, 70)  # largura e altura
+        self.botao_voltar.setFlat(True)
 
         self.botao_limpar = QPushButton(self)
-        self.botao_limpar.move(850, 110) #esquerda e topo
-        self.botao_limpar.resize(125, 60) #largura e altura
+        self.botao_limpar.move(850, 110)  # esquerda e topo
+        self.botao_limpar.resize(125, 60)  # largura e altura
         self.botao_limpar.setFlat(True)
         self.botao_limpar.clicked.connect(self.limpar)
 
@@ -219,9 +220,9 @@ class Velha(QMainWindow):
 
     def verificacoes(self, botao):
         if self.lista_jogadas[0] == 1:
-            botao.setStyleSheet('border-image: url(O.png)')
+            botao.setStyleSheet('border-image: url(img/O.png)')
         elif self.lista_jogadas[0] == 2:
-            botao.setStyleSheet('border-image: url(X.png)')
+            botao.setStyleSheet('border-image: url(img/X.png)')
 
     def ganhador(self, indice):
         self.lista_jogadas.reverse()
@@ -236,37 +237,55 @@ class Velha(QMainWindow):
         self.lista_jogadas.reverse()
 
     def ganhador1(self):
-        if self.verificacao_jogador[0] == 1 and self.verificacao_jogador[1] == 1 and self.verificacao_jogador[2] == 1 or self.verificacao_jogador[3] == 1 and self.verificacao_jogador[4] == 1 and self.verificacao_jogador[5] == 1 or \
-            self.verificacao_jogador[6] == 1 and self.verificacao_jogador[7] == 1 and self.verificacao_jogador[8] == 1 or self.verificacao_jogador[0] == 1 and self.verificacao_jogador[4] == 1 and self.verificacao_jogador[8] == 1 or \
-            self.verificacao_jogador[2] == 1 and self.verificacao_jogador[4] == 1 and self.verificacao_jogador[6] == 1 or self.verificacao_jogador[0] == 1 and self.verificacao_jogador[3] == 1 and self.verificacao_jogador[6] == 1 or \
-            self.verificacao_jogador[1] == 1 and self.verificacao_jogador[4] == 1 and self.verificacao_jogador[7] or self.verificacao_jogador[2] == 1 and self.verificacao_jogador[5] == 1 and self.verificacao_jogador[8] == 1:
-                self.pontos_jogador+=1
-                self.pontuacao_jogador.setText(str(self.pontos_jogador))
-                self.desabilitar(False)
-                self.verificacao_jogador = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-                self.verificacao_computador = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-                self.verificacao_jogadas = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-                self.lista_jogadas.clear()
+        if self.verificacao_jogador[0] == 1 and self.verificacao_jogador[1] == 1 and self.verificacao_jogador[2] == 1 or \
+                self.verificacao_jogador[3] == 1 and self.verificacao_jogador[4] == 1 and self.verificacao_jogador[
+            5] == 1 or \
+                self.verificacao_jogador[6] == 1 and self.verificacao_jogador[7] == 1 and self.verificacao_jogador[
+            8] == 1 or self.verificacao_jogador[0] == 1 and self.verificacao_jogador[4] == 1 and \
+                self.verificacao_jogador[8] == 1 or \
+                self.verificacao_jogador[2] == 1 and self.verificacao_jogador[4] == 1 and self.verificacao_jogador[
+            6] == 1 or self.verificacao_jogador[0] == 1 and self.verificacao_jogador[3] == 1 and \
+                self.verificacao_jogador[6] == 1 or \
+                self.verificacao_jogador[1] == 1 and self.verificacao_jogador[4] == 1 and self.verificacao_jogador[7] or \
+                self.verificacao_jogador[2] == 1 and self.verificacao_jogador[5] == 1 and self.verificacao_jogador[8] == 1:
+            self.pontos_jogador += 1
+            print(self.pontos_jogador)
+            self.pontuacao_jogador.setText(str(self.pontos_jogador))
+            self.desabilitar(False)
+            self.verificacao_jogador = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+            self.verificacao_computador = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+            self.verificacao_jogadas = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+            self.lista_jogadas.clear()
 
-        elif self.verificacao_computador[0] == 2 and self.verificacao_computador[1] == 2 and self.verificacao_computador[2] == 2 or self.verificacao_computador[3] == 2 and self.verificacao_computador[4] == 2 and self.verificacao_computador[5] == 2 or \
-            self.verificacao_computador[6] == 2 and self.verificacao_computador[7] == 2 and self.verificacao_computador[8] == 2 or self.verificacao_computador[0] == 2 and self.verificacao_computador[4] == 2 and self.verificacao_computador[8] == 2 or \
-            self.verificacao_computador[2] == 2 and self.verificacao_computador[4] == 2 and self.verificacao_computador[6] == 2 or self.verificacao_computador[0] == 2 and self.verificacao_computador[3] == 2 and self.verificacao_computador[6] == 2 or \
-            self.verificacao_computador[1] == 2 and self.verificacao_computador[4] == 2 and self.verificacao_computador[7] or self.verificacao_computador[2] == 2 and self.verificacao_computador[5] == 2 and self.verificacao_computador[8] == 2:
-                self.pontos_computador+=1
-                self.pontuacao_computador.setText(str(self.pontos_computador))
-                self.desabilitar(False)
-                self.verificacao_jogador = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-                self.verificacao_computador = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-                self.verificacao_jogadas = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-                self.lista_jogadas.clear()
+        elif self.verificacao_computador[0] == 2 and self.verificacao_computador[1] == 2 and \
+                self.verificacao_computador[2] == 2 or self.verificacao_computador[3] == 2 and \
+                self.verificacao_computador[4] == 2 and self.verificacao_computador[5] == 2 or \
+                self.verificacao_computador[6] == 2 and self.verificacao_computador[7] == 2 and \
+                self.verificacao_computador[8] == 2 or self.verificacao_computador[0] == 2 and \
+                self.verificacao_computador[4] == 2 and self.verificacao_computador[8] == 2 or \
+                self.verificacao_computador[2] == 2 and self.verificacao_computador[4] == 2 and \
+                self.verificacao_computador[6] == 2 or self.verificacao_computador[0] == 2 and \
+                self.verificacao_computador[3] == 2 and self.verificacao_computador[6] == 2 or \
+                self.verificacao_computador[1] == 2 and self.verificacao_computador[4] == 2 and \
+                self.verificacao_computador[7] or self.verificacao_computador[2] == 2 and self.verificacao_computador[
+            5] == 2 and self.verificacao_computador[8] == 2:
+            self.pontos_computador += 1
+            print(self.pontos_computador)
+            self.pontuacao_computador.setText(str(self.pontos_computador))
+            self.desabilitar(False)
+            self.verificacao_jogador = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+            self.verificacao_computador = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+            self.verificacao_jogadas = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+            self.lista_jogadas.clear()
 
-        elif self.verificacao_jogadas[0] != 0 and self.verificacao_jogadas[1] != 0 and self.verificacao_jogadas[2] != 0 and self.verificacao_jogadas[3] != 0 and self.verificacao_jogadas[4] != 0 and \
-            self.verificacao_jogadas[5] != 0 and self.verificacao_jogadas[6] != 0 and self.verificacao_jogadas[7] != 0 and self.verificacao_jogadas[8] != 0:
+        elif self.verificacao_jogadas[0] != 0 and self.verificacao_jogadas[1] != 0 and self.verificacao_jogadas[
+            2] != 0 and self.verificacao_jogadas[3] != 0 and self.verificacao_jogadas[4] != 0 and \
+                self.verificacao_jogadas[5] != 0 and self.verificacao_jogadas[6] != 0 and self.verificacao_jogadas[
+            7] != 0 and self.verificacao_jogadas[8] != 0:
             self.ninguem_venceu.setText('Ninguém venceu!')
             self.verificacao_jogador = [0, 0, 0, 0, 0, 0, 0, 0, 0]
             self.verificacao_computador = [0, 0, 0, 0, 0, 0, 0, 0, 0]
             self.verificacao_jogadas = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-
 
     def limpar(self):
         self.botao1.setStyleSheet('')
@@ -285,11 +304,10 @@ class Velha(QMainWindow):
 
         self.desabilitar(True)
 
-    # def voltar(self):
-    #     pass
-    #     # p.show()
-    #     # self.hide()
-
+    def voltar(self):
+        pass
+        principal.show()
+        self.hide()
 
     def desabilitar(self, valor):
         self.botao1.setEnabled(valor)
@@ -304,10 +322,12 @@ class Velha(QMainWindow):
 
     def carregar_janela(self):
         self.setGeometry(self.esquerda, self.topo, self.largura, self.altura)
+        self.setWindowTitle(self.titulo)
         # self.show()
+
 
 if __name__ == '__main__':
     aplicacao = QApplication(sys.argv)
     v = Velha()
-    # p = Principal()
+    p = Principal()
     sys.exit(aplicacao.exec())
