@@ -1,10 +1,9 @@
 import random
 import sys
-import time
-
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QLineEdit
 from PyQt5 import QtGui
+# from telaPrincipal import Principal
 
 
 class Forca(QMainWindow):
@@ -14,6 +13,7 @@ class Forca(QMainWindow):
         self.esquerda = 100
         self.largura = 1000
         self.altura = 600
+        self.titulo = 'Hangman'
         self.qtd_caracter_pal_sorteada = ''
         self.letra = ''
         self.lista_palavras = ['DOBBY', 'RELIQUIAS', 'HAGRID', 'HOGWARTS', 'HARRY', 'DEMENTADORES', 'SECRETA',
@@ -33,7 +33,7 @@ class Forca(QMainWindow):
         self.fundo.move(0, 0)
         self.fundo.resize(1000, 600)
         self.fundo.setScaledContents(True)
-        self.fundo.setPixmap(QtGui.QPixmap('img/interface/forca.jpg'))
+        self.fundo.setPixmap(QtGui.QPixmap('img/forca.jpg'))
 
         self.lugar_palavra_sorteada = QLabel(self)
         self.lugar_palavra_sorteada.resize(500, 200)
@@ -42,8 +42,8 @@ class Forca(QMainWindow):
 
         self.dicas = QLabel(self)
         self.dicas.move(165, 47)
-        self.dicas.resize(500, 200)
-        self.dicas.setStyleSheet('QLabel {font: bold; font-size: 20px; color: #ced8f7}')
+        self.dicas.resize(800, 200)
+        self.dicas.setStyleSheet('QLabel {font: bold; font-size: 15px; color: #ced8f7}')
 
         self.tratamento_de_erro = QLabel(self)
         self.tratamento_de_erro.resize(500, 200)
@@ -69,38 +69,47 @@ class Forca(QMainWindow):
         self.botao_voltar_menu.clicked.connect(self.mostra_jogo)
 
         self.voltar_para_menu = QPushButton(self)
-        self.voltar_para_menu.move(855, 17)
+        self.voltar_para_menu.move(855, 46)
         self.voltar_para_menu.resize(100, 65)
         self.voltar_para_menu.setEnabled(True)
         self.voltar_para_menu.setFlat(True)
-        # self.voltar_para_menu.clicked.connect(self.funcao)
 
         self.caixa_texto = QLineEdit(self)
         self.caixa_texto.setStyleSheet('border: 2px solid rgb(52, 59, 72, 20%); border-radius: 5px; background-color: rgb(52, 59, 72, 20%);color: rgb(205, 195, 255);')
         self.caixa_texto.move(380, 243)
         self.caixa_texto.resize(300, 40)
+        self.caixa_texto.returnPressed.connect(self.leitura)
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.funcao_repetitiva)
-        self.sortear_palavra()
 
         self.carregar_janela()
 
+        # p = Principal()
+
     def carregar_janela(self):
         self.setGeometry(self.esquerda, self.topo, self.largura, self.altura)
+        self.sortear_palavra()
+        self.setWindowTitle(self.titulo)
+
         # self.show()
+
+    def funcao_tela(self):
+        print('chegou')
+        self.hide()
+        # p.show()
 
     def funcao_repetitiva(self):
         if len(self.lista_chutes) == 1:
-            self.fundo.setPixmap(QtGui.QPixmap('img/interface/depois1.jpg'))
+            self.fundo.setPixmap(QtGui.QPixmap('img/depois1.jpg'))
         elif len(self.lista_chutes) == 2:
-            self.fundo.setPixmap(QtGui.QPixmap('img/interface/depois2.jpg'))
+            self.fundo.setPixmap(QtGui.QPixmap('img/depois2.jpg'))
         elif len(self.lista_chutes) == 3:
-            self.fundo.setPixmap(QtGui.QPixmap('img/interface/depois3.jpg'))
+            self.fundo.setPixmap(QtGui.QPixmap('img/depois3.jpg'))
         elif len(self.lista_chutes) == 4:
-            self.fundo.setPixmap(QtGui.QPixmap('img/interface/depois4.jpg'))
+            self.fundo.setPixmap(QtGui.QPixmap('img/depois4.jpg'))
         elif len(self.lista_chutes) == 5:
-            self.fundo.setPixmap(QtGui.QPixmap('img/interface/depois5.jpg'))
+            self.fundo.setPixmap(QtGui.QPixmap('img/depois5.jpg'))
         elif len(self.lista_chutes) == 6:
             self.img_perdeu()
 
@@ -132,12 +141,11 @@ class Forca(QMainWindow):
             self.fundo.setPixmap(QtGui.QPixmap(img2))
 
     def jogo(self):
-
         self.qtd_caracter_pal_sorteada = len(self.palavra_sorteada)
 
         if self.letra == '':
             self.tratamento_de_erro.setText('Digite uma letra, por favor.')
-        elif self.letra.isalpha() == False:
+        elif not self.letra.isalpha():
             self.tratamento_de_erro.setText('Digite uma letra, por favor.')
 
         elif len(self.letra) != 1 and len(self.letra) < self.qtd_caracter_pal_sorteada:
@@ -161,25 +169,25 @@ class Forca(QMainWindow):
             if len(self.lista_chutes) == 1:
                 if not self.timer.isActive():
                     self.timer.start(500)
-                    self.fundo.setPixmap(QtGui.QPixmap('img/interface/durante1.jpg'))
+                    self.fundo.setPixmap(QtGui.QPixmap('img/durante1.jpg'))
             if len(self.lista_chutes) == 2:
-                self.fundo.setPixmap(QtGui.QPixmap('img/interface/durante2.jpg'))
+                self.fundo.setPixmap(QtGui.QPixmap('img/durante2.jpg'))
                 if not self.timer.isActive():
                     self.timer.start(500)
             elif len(self.lista_chutes) == 3:
-                self.fundo.setPixmap(QtGui.QPixmap('img/interface/durante3.jpg'))
+                self.fundo.setPixmap(QtGui.QPixmap('img/durante3.jpg'))
                 if not self.timer.isActive():
                     self.timer.start(500)
             elif len(self.lista_chutes) == 4:
-                self.fundo.setPixmap(QtGui.QPixmap('img/interface/durante4.jpg'))
+                self.fundo.setPixmap(QtGui.QPixmap('img/durante4.jpg'))
                 if not self.timer.isActive():
                     self.timer.start(500)
             elif len(self.lista_chutes) == 5:
-                self.fundo.setPixmap(QtGui.QPixmap('img/interface/durante5.jpg'))
+                self.fundo.setPixmap(QtGui.QPixmap('img/durante5.jpg'))
                 if not self.timer.isActive():
                     self.timer.start(500)
             elif len(self.lista_chutes) == 6:
-                self.fundo.setPixmap(QtGui.QPixmap('img/interface/durante6.jpg'))
+                self.fundo.setPixmap(QtGui.QPixmap('img/durante6.jpg'))
                 if not self.timer.isActive():
                     self.timer.start(500)
 
@@ -189,8 +197,6 @@ class Forca(QMainWindow):
                     self.lista_palavra_sorteada.insert(index, item)
                     p_del = index + 1
                     del self.lista_palavra_sorteada[p_del]
-
-            self.mostrar_usuario = self.lista_palavra_sorteada[0:]
 
             self.mostrar_usuario = ''
             for i in self.lista_palavra_sorteada:
@@ -204,7 +210,7 @@ class Forca(QMainWindow):
             self.img_ganhou()
 
     def mostra_jogo(self):
-        self.fundo.setPixmap(QtGui.QPixmap('img/interface/forca.jpg'))
+        self.fundo.setPixmap(QtGui.QPixmap('img/forca.jpg'))
         self.caixa_texto.clear()
         self.caixa_texto.show()
         self.caixa_texto.setEnabled(True)
@@ -214,38 +220,35 @@ class Forca(QMainWindow):
         self.sortear_palavra()
 
     def img_perdeu(self):
-        self.fundo.setPixmap(QtGui.QPixmap('img/interface/perdeu.jpg'))
-        self.caixa_texto.hide()
-        self.lista_palavra_sorteada.clear()
-        self.lista_chutes.clear()
-        self.mostrar_usuario = ''
-        self.chutes.setText('')
-        self.dicas.setText('')
-        self.tratamento_de_erro.setText('')
-        self.lugar_palavra_sorteada.setText('')
-        self.situ_botoes(True, False)
+        self.fundo.setPixmap(QtGui.QPixmap('img/perdeu.jpg'))
+        self.limpar_tudo(True, False)
 
     def img_ganhou(self):
-        self.fundo.setPixmap(QtGui.QPixmap('img/interface/venceu.jpg'))
+        self.fundo.setPixmap(QtGui.QPixmap('img/venceu.jpg'))
+        self.limpar_tudo(True, False)
 
-        self.caixa_texto.hide()
-        self.lista_palavra_sorteada.clear()
-        self.lista_chutes.clear()
-        self.mostrar_usuario = ''
-        self.chutes.setText('')
-        self.dicas.setText('')
-        self.tratamento_de_erro.setText('')
-        self.lugar_palavra_sorteada.setText('')
-        self.situ_botoes(True, False)
+    def funcao(self):
+        pass
 
-    def situ_botoes(self, verdade, falso):
+    def limpar_tudo(self, verdade, falso):
         self.botao_avada.setEnabled(falso)
         self.botao_voltar_menu.setEnabled(verdade)
         self.caixa_texto.setEnabled(falso)
         self.lugar_palavra_sorteada.setEnabled(falso)
+        self.caixa_texto.hide()
+        self.lista_palavra_sorteada.clear()
+        self.lista_chutes.clear()
+        self.mostrar_usuario = ''
+        self.chutes.setText('')
+        self.dicas.setText('')
+        self.tratamento_de_erro.setText('')
+        self.lugar_palavra_sorteada.setText('')
+        self.mostrar_usuario = ''
+        # self.sortear_palavra()
 
 
 if __name__ == '__main__':
     aplicacao = QApplication(sys.argv)
     f = Forca()
+    # p = Principal()
     sys.exit(aplicacao.exec())
